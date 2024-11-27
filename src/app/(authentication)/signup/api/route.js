@@ -39,21 +39,30 @@
 import { connectDB } from "@/lib/connectDB";
 
 export const POST = async (request) => {
-    const newUser = await request.json();
     try {
-        const db = await connectDB()
-        const usersCollection = db.collection('users')
+        const newUser = await request.json();
+        const db = await connectDB();
+        const usersCollection = db.collection("users");
 
-        const exist = await usersCollection.findOne({ email: newUser.email })
+        const exist = await usersCollection.findOne({ email: newUser.email });
         if (exist) {
-            return Response.json({ message: 'User Exist' }, { status: 304 })
+            return new Response(
+                JSON.stringify({ message: "User Exists" }),
+                { status: 304, headers: { "Content-Type": "application/json" } }
+            );
         }
-        const res = await usersCollection.insertOne(newUser)
-        return Response.json({ message: 'User Created' }, { status: 200 })
+
+        const res = await usersCollection.insertOne(newUser);
+        return new Response(
+            JSON.stringify({ message: "User Created", userId: res.insertedId }),
+            { status: 201, headers: { "Content-Type": "application/json" } }
+        );
     } catch (error) {
-        return Response.json(
-            { message: 'Something Went Wrong', error },
-            { status: 500 }
-        )
+        console.error("API error:", error.message);
+        return new Response(
+            JSON.stringify({ message: "Server Error", error: error.message }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
     }
-}
+
+};

@@ -1,46 +1,26 @@
-// import { MongoClient, ServerApiVersion } from "mongodb";
 
-// let db;
-// export const connectDB = async () => {
-//     if (db) return db;
-//     try {
-//         const uri = `mongodb+srv://${process.env.NEXT_AUTH_DB_USER}:${process.env.NEXT_AUTH_DB_PASSWORD}@cluster0.8lcgwxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-//         const client = new MongoClient(uri, {
-//             serverApi: {
-//                 version: ServerApiVersion.v1,
-//                 strict: true,
-//                 deprecationErrors: true,
-//             }
-//         });
-//         db = client.db('carDoctor')
-//         return db;
-//     }
-//     catch (error) {
-//         console.log(error)
-//     }
-// }
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 let db;
+
 export const connectDB = async () => {
-    if (db) return db; // Return the existing connection if already established
-
+    if (db) return db;
     try {
-        const uri = `mongodb+srv://${process.env.NEXT_AUTH_DB_USER}:${process.env.NEXT_AUTH_DB_PASSWORD}@cluster0.8lcgwxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+        const uri = process.env.NEXT_PUBLIC_MONGODB_URI;
 
+        if (!uri) {
+            throw new Error("Please add your MongoDB URI to .env.local");
+        }
         const client = new MongoClient(uri, {
             serverApi: {
                 version: ServerApiVersion.v1,
                 strict: true,
                 deprecationErrors: true,
-            },
+            }
         });
-
-        await client.connect(); // Ensure the client connects to the cluster
-        db = client.db("carDoctor"); // Initialize the `db` instance
-        return db;
+        db = client.db("carDoctor");
     } catch (error) {
-        console.error("Error connecting to the database:", error.message);
-        throw new Error("Database connection failed"); // Propagate the error
+        console.error("Failed to connect to MongoDB", error);
+        throw new Error("Failed to connect to MongoDB");
     }
 };
