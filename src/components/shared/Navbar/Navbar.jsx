@@ -1,10 +1,14 @@
+"use client"
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { FiShoppingCart } from "react-icons/fi";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { signOut, useSession } from 'next-auth/react';
 const Navbar = () => {
 
+    const session = useSession()
+    console.log(session)
     return (
         <div className='bg-base-100'>
             <div className="navbar container mx-auto px-4">
@@ -31,7 +35,15 @@ const Navbar = () => {
                         <span className='text-xl'><FaMagnifyingGlass /></span>
                     </div>
 
-                    <a className="btn btn-outline border-primary hover:bg-primary text-primary">Appointment</a>
+                    {
+                        !session.data ? <>
+                            <Link href={'/login'}>
+                                <button className="btn btn-outline border-primary hover:bg-primary text-primary">Login</button>
+                            </Link>
+                        </>
+                            :
+                            <button onClick={() => signOut()} className="btn btn-outline border-primary hover:bg-primary text-primary">Logout</button>
+                    }
                 </div>
             </div>
         </div>

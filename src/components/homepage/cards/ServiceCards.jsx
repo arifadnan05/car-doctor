@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 
 const ServiceCards = ({ service }) => {
-    console.log(service)
+    // console.log(service)
     return (
         <div className="card bg-base-100 w-96 shadow-xl">
             <figure>
